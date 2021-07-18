@@ -104,4 +104,6 @@ with open("sat.txt", "w", encoding="utf-8") as f:
     f.truncate()
     f.write(out)
 
-os.system("glucose/parallel/glucose-syrup_static sat.txt {}".format(sys.argv[2]))
+glucose_command = "glucose/parallel/glucose-syrup_static sat.txt >> " + (sys.argv[2]) 
+
+os.system(glucose_command)
