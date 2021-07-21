@@ -2,12 +2,14 @@ import os
 import sys
 import datetime
 import json
+from icalendar import Calendar, Event
 
 with open(sys.argv[1], "r") as f:
     s = f.read()
 data = json.loads(s)
 print(data)
 
+participants = data["participants"]
 start_date = datetime.date.fromisoformat(data['start_date'])
 end_date = datetime.date.fromisoformat(data['end_date'])
 start_time = datetime.time.fromisoformat(data['start_time'])
@@ -110,7 +112,52 @@ os.system(glucose_command)
 
 with open("sat_sol.txt", "r") as f:
     s = f.read()
-solution = [int(i) for i in s.split(" ")[:-1]]
+solution = filter(lambda n: n>0, [int(i) for i in s.split(" ")])
 
-#print(solution)
+cal = Calendar()
+cal['summary'] = data["tournament_name"]
+cal.add('attendee', participants)
 
+def var_to_event(var):
+    timeslot = var % total_timeslots - 1
+    game = var // total_timeslots
+    player1 = game // (n_participants - 1)
+    player2 = game % (n_participants - 1)
+    if player1 <= player2:
+        player2 += 1
+    #print(var, get_var(player1, player2, timeslot))
+    assert(get_var(player1, player2, timeslot) == var)
+    day = timeslot // timeslots_per_day
+    time = timeslot % timeslots_per_day
+
+    #print(timeslot, participants[player1], participants[player2], day, time)
+
+    event_day = start_date + datetime.timedelta(days=day)
+    event_time = datetime.datetime.combine(datetime.date.min, start_time) + datetime.timedelta(hours=time*2)
+    event_time = event_time.time()
+    event_end_time = datetime.datetime.combine(datetime.date.min, start_time) + datetime.timedelta(hours=time*2+2)
+    event_end_time = event_end_time.time()
+    event_date = datetime.datetime.combine(event_day, event_time)
+    event_end_date = datetime.datetime.combine(event_day, event_end_time)
+
+    event = Event()
+    event.add('summary', '{} (local) VS {} (visitor)'.format(participants[player1], participants[player2]))
+    event.add('dtstart', event_date)
+    event.add('dtend', event_end_date)
+    return event
+
+for var in solution:
+    cal.add_component(var_to_event(var))
+
+cal_content = cal.to_ical().decode("utf-8") 
+#print(cal_content)
+
+if len(sys.argv) > 2:
+    filename = sys.argv[2]
+else:
+    filename = data["tournament_name"]+".ics"
+
+open(filename, "a").close()
+with open(filename, "w", encoding="utf-8") as f:
+    f.truncate()
+    f.write(cal_content)
