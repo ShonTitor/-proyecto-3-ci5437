@@ -5,7 +5,7 @@ import json
 
 with open(sys.argv[1], "r") as f:
     s = f.read()
-    data = json.loads(s)
+data = json.loads(s)
 print(data)
 
 start_date = datetime.date.fromisoformat(data['start_date'])
@@ -104,6 +104,13 @@ with open("sat.txt", "w", encoding="utf-8") as f:
     f.truncate()
     f.write(out)
 
-glucose_command = "glucose/parallel/glucose-syrup_static sat.txt >> " + (sys.argv[2]) 
+glucose_command = "glucose/simp/glucose_static sat.txt sat_sol.txt"
 
 os.system(glucose_command)
+
+with open("sat_sol.txt", "r") as f:
+    s = f.read()
+solution = [int(i) for i in s.split(" ")[:-1]]
+
+#print(solution)
+
