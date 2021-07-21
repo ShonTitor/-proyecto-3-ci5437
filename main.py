@@ -112,11 +112,9 @@ os.system(glucose_command)
 
 with open("sat_sol.txt", "r") as f:
     s = f.read()
+if 'UNSAT' in s:
+    sys.exit(0)
 solution = filter(lambda n: n>0, [int(i) for i in s.split(" ")])
-
-cal = Calendar()
-cal['summary'] = data["tournament_name"]
-cal.add('attendee', participants)
 
 def var_to_event(var):
     timeslot = var % total_timeslots - 1
@@ -146,11 +144,14 @@ def var_to_event(var):
     event.add('dtend', event_end_date)
     return event
 
+cal = Calendar()
+cal['summary'] = data["tournament_name"]
+cal.add('attendee', participants)
+
 for var in solution:
     cal.add_component(var_to_event(var))
 
 cal_content = cal.to_ical().decode("utf-8") 
-#print(cal_content)
 
 if len(sys.argv) > 2:
     filename = sys.argv[2]
