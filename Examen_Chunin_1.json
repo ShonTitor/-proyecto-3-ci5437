@@ -1,0 +1,25 @@
+{
+  "tournament_name": "Examen Chunin",
+  "start_date": "2000-01-01",
+  "end_date": "2000-03-01",
+  "start_time": "06:00",
+  "end_time": "14:00",
+  "participants": [
+    "Yoroi Akado",
+    "Sasuke Uchiha",
+    "Zaku Abumi",
+    "Kankuro",
+    "Sakura Haruno",
+    "Ino Yamanaka",
+    "Tenten",
+    "Temari",
+    "Shikamaru Nara",
+    "Kin Tsuchi",
+    "Naruto Uzumaki",
+    "Kiba Inuzuka",
+    "Hinata Hyuga",
+    "Neji Hyuga",
+    "Gaara",
+    "Rock Lee"
+  ]
+}
